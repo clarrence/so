@@ -64,16 +64,33 @@
             bottom: 40px;
             left: -450px; /* Hidden state */
             width: 400px;
-            max-width: 85vw;
+            max-width: 95vw;
             max-height: 70vh;
-            padding: 45px;
+            padding: 45px 24px 45px 24px;
             overflow-y: auto;
             scrollbar-width: none;
             clip-path: polygon(1% 1%, 99% 0%, 98% 30%, 100% 70%, 99% 99%, 30% 98%, 0% 100%, 1% 40%);
+            position: fixed;
+            top: 40px;
+            box-sizing: border-box;
         }
         #bio-content::-webkit-scrollbar { display: none; }
 
         #bio-content.active { left: 30px; opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 600px) {
+            #bio-content {
+                width: 98vw;
+                left: -100vw;
+                max-height: 80vh;
+                padding: 18px 6vw 18px 6vw;
+                font-size: 13px;
+                top: 10vw;
+            }
+            #bio-content.active {
+                left: 1vw;
+            }
+        }
 
         /* Samply Specific */
         #samply-overlay {
@@ -87,7 +104,54 @@
         /* Typography */
         h1 { font-family: 'Playfair Display', serif; font-size: 24px; text-transform: uppercase; margin-bottom: 20px; }
         p { font-family: 'Libre Baskerville', serif; font-size: 14.5px; line-height: 1.8; opacity: 0.85; }
-        .close-x { position: absolute; top: 20px; right: 25px; cursor: pointer; opacity: 0.4; }
+        .close-x {
+            position: fixed;
+            top: 20px;
+            right: 25px;
+            cursor: pointer;
+            opacity: 0.7;
+            z-index: 30000;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            padding: 6px 12px;
+            font-size: 22px;
+            border: 1px solid var(--border);
+            transition: opacity 0.2s;
+        }
+        .close-x:hover { opacity: 1; }
+        /* Samply Overlay Glassmorphism */
+        #samply-overlay {
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 20000;
+            padding: 0;
+        }
+        #samply-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #samply-close {
+            position: absolute;
+            top: 18px;
+            right: 22px;
+            cursor: pointer;
+            opacity: 0.7;
+            z-index: 30001;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            padding: 6px 12px;
+            font-size: 22px;
+            border: 1px solid var(--border);
+            transition: opacity 0.2s;
+        }
+        #samply-close:hover { opacity: 1; }
 
         /* Spline Layer */
         spline-viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
@@ -100,17 +164,56 @@
     <button id="btn-mute" class="btn-text">MUTE</button>
 
     <div id="bio-content" class="glass-plaque">
-        <span class="close-x" onclick="toggleBio(false)">✕</span>
+        <span class="close-x" id="bio-close">✕</span>
         <header>
-            <h1>SEB GAINSBOROUGH <br> <strong>VESSEL</strong></h1>
+            <h1>SEB GAINSBOROUGH <br> <strong>/ VESSEL</strong></h1>
         </header>
         <p>Seb Gainsborough makes electronic and contemporary instrumental music under both his own name and the pseudonym Vessel.</p>
-        <p style="margin-top:20px;">[Insert full bio here—I have kept it short for this block to ensure you have space]</p>
+        <p style="margin-top: 15px;">Producer and composer Sebastian Gainsborough sits between, amongst and around the world of experimental pop and composition with outlets ranging from the production of singles for the likes of <strong>Fever Ray</strong> or remixing <strong>HEALTH, Foals and Lyra Pramuk</strong> to composing new instrumental work for <strong>Tate Modern, Manchester Collective and Somerset House</strong>.</p>
+        <p style="margin-top: 15px;">His early work was more industrial in nature, eschewing instruments in favour of heavily manipulated everyday sound to create crushing, heavy soundscapes. As time marched on, more and more light crept in, with those foley sounds becoming cleaner, and straight out of nature.</p>
+        <p style="margin-top: 15px; font-style: italic;">If 2018’s Queen of Golden Dogs was the light peaking from the clouds, So! is staring at the sun & moon, revelling in questions without answers.</p>
+        <p style="margin-top: 15px;">Whilst diverse in output, Gainsborough is truly a singular artist.</p>
+
+        <div class="work-section">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px;">Performance</h3>
+            <div class="work-item"><strong>2022</strong> — Logos (Southbank Centre / NYX)</div>
+            <div class="work-item"><strong>2021</strong> — Squint (Southbank Centre / Manchester Collective)</div>
+            <div class="work-item"><strong>2020</strong> — Passion (Somerset House)</div>
+            <div class="work-item"><strong>2019</strong> — Written In Fire (Snape Maltings)</div>
+            <div class="work-item"><strong>2019</strong> — Paradise Lost (Manchester Collective)</div>
+            <div class="work-item"><strong>2016</strong> — Transition (Tate Britain)</div>
+        </div>
+
+        <div class="work-section">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px;">Media Composition</h3>
+            <div class="work-item"><strong>2024</strong> — Monkey Man (Dev Patel)</div>
+            <div class="work-item"><strong>2024</strong> — Masterpiece Mommy (Dorothy Sing Zhang)</div>
+            <div class="work-item"><strong>2023</strong> — Birdsong (Anouk De Clerq)</div>
+            <div class="work-item"><strong>2022</strong> — The Northman (Robert Eggers)</div>
+            <div class="work-item"><strong>2021</strong> — OK / We’ll Find You... (Anouk De Clerq)</div>
+            <div class="work-item"><strong>2020</strong> — One (Anouk De Clerq)</div>
+            <div class="work-item"><strong>2019</strong> — Helga Humming (Anouk De Clerq)</div>
+            <div class="work-item"><strong>2016</strong> — The Handmaiden (Trailer)</div>
+            <div class="work-item"><strong>2015</strong> — Gravity Fatigue (Saddlers Wells)</div>
+            <div class="work-item"><strong>2015</strong> — Alexander McQueen (A/W Runway)</div>
+        </div>
+
+        <div class="work-section">
+            <h3 style="font-family: 'Playfair Display', serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 15px;">Recorded Works</h3>
+            <div class="work-item"><strong>2018</strong> — Queen of Golden Dogs (LP)</div>
+            <div class="work-item"><strong>2014</strong> — Punish, Honey (LP)</div>
+            <div class="work-item"><strong>2012</strong> — Order of Noise (LP)</div>
+        </div>
+
+        <footer style="margin-top: 45px; display: flex; gap: 20px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.15em;">
+            <a href="https://open.spotify.com/playlist/3ziHOz6ju5FfPHdZNb03ip" target="_blank" style="color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px;">Highlights</a>
+            <a href="https://sebgainsborough.com/" target="_blank" style="color: #fff; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px;">Website</a>
+        </footer>
     </div>
 
     <div id="samply-overlay" class="glass-plaque">
-        <span class="close-x" onclick="toggleListen(false)">✕</span>
-        <iframe src="https://samply.app/embed/G2INXIQ4sRa21WatK658?si=p3QjMJ38PwRw08nexFUSY079cVD2" width="100%" height="100%" frameborder="0" style="border-radius: 4px;"></iframe>
+        <span class="close-x" id="samply-close">✕</span>
+        <iframe src="https://samply.app/embed/G2INXIQ4sRa21WatK658?si=p3QjMJ38PwRw08nexFUSY079cVD2" width="100%" height="100%" frameborder="0" style="border-radius: 8px;"></iframe>
     </div>
 
     <spline-viewer id="main-spline" url="https://prod.spline.design/Vi-TzRE4G-lOpxXh/scene.splinecode"></spline-viewer>
@@ -120,20 +223,27 @@
     <script>
         const spline = document.getElementById('main-spline');
         const muteBtn = document.getElementById('btn-mute');
+        const bio = document.getElementById('bio-content');
+        const listen = document.getElementById('samply-overlay');
+        const bioClose = document.getElementById('bio-close');
+        const samplyClose = document.getElementById('samply-close');
         let isMuted = false;
+        let splineRuntime = null;
 
-        // CRITICAL FIX: Wait for Spline to be fully loaded
-        spline.addEventListener('load', () => {
-            // This confirms the runtime is ready to accept variables
-            console.log('Spline Runtime Loaded');
-        });
+        // Robust Spline runtime bridge
+        function getSplineRuntime() {
+            if (!spline) return null;
+            return spline.spline || spline._spline || spline.runtime || spline;
+        }
 
         function setSplineMute(mute) {
             isMuted = mute;
             const val = mute ? 1 : 0;
             try {
-                // Updated access method for local/static environments
-                spline.setVariable('muteVar', val); 
+                const runtime = getSplineRuntime();
+                if (runtime && typeof runtime.setVariable === 'function') {
+                    runtime.setVariable('muteVar', val);
+                }
             } catch (e) {
                 console.error("Spline not ready yet. Retrying...", e);
             }
@@ -141,9 +251,6 @@
 
         // TOGGLE LOGIC
         function toggleListen(show) {
-            const listen = document.getElementById('samply-overlay');
-            const bio = document.getElementById('bio-content');
-            
             if (show) {
                 bio.classList.remove('active');
                 listen.classList.add('active');
@@ -154,18 +261,30 @@
             }
         }
 
+        function toggleBio(show) {
+            if (show) {
+                toggleListen(false);
+                bio.classList.add('active');
+            } else {
+                bio.classList.remove('active');
+            }
+        }
+
         // Bind your buttons
         document.getElementById('btn-listen').onclick = () => toggleListen(true);
-        document.getElementById('btn-bio').onclick = () => {
-            document.getElementById('bio-content').classList.add('active');
-            document.getElementById('samply-overlay').classList.remove('active');
-        };
-        
+        document.getElementById('btn-bio').onclick = () => toggleBio(true);
         muteBtn.onclick = () => {
             isMuted = !isMuted;
             setSplineMute(isMuted);
             muteBtn.innerText = isMuted ? "UNMUTE" : "MUTE";
         };
+        bioClose.onclick = () => toggleBio(false);
+        samplyClose.onclick = () => toggleListen(false);
+
+        // iPad/Safari fix: stop spline from stealing touch
+        spline.addEventListener('touchstart', (e) => {
+            if (e.target.tagName !== 'BUTTON') e.stopPropagation();
+        }, { passive: true });
     </script>
 </body>
 </html>
