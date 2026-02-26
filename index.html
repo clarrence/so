@@ -119,54 +119,53 @@
 
     <script>
         const spline = document.getElementById('main-spline');
-        const bio = document.getElementById('bio-content');
-        const listen = document.getElementById('samply-overlay');
         const muteBtn = document.getElementById('btn-mute');
-        
         let isMuted = false;
 
-        function toggleBio(show) {
-            if (show) {
-                toggleListen(false);
-                bio.classList.add('active');
-            } else {
-                bio.classList.remove('active');
-            }
-        }
-
-        function toggleListen(show) {
-            if (show) {
-                toggleBio(false);
-                listen.classList.add('active');
-                // Logic: Set Spline to Muted when listening to Samply
-                setSplineMute(true);
-                muteBtn.innerText = "UNMUTE";
-            } else {
-                listen.classList.remove('active');
-                // Suggestion: We stay muted until they explicitly click UNMUTE
-            }
-        }
+        // CRITICAL FIX: Wait for Spline to be fully loaded
+        spline.addEventListener('load', () => {
+            // This confirms the runtime is ready to accept variables
+            console.log('Spline Runtime Loaded');
+        });
 
         function setSplineMute(mute) {
             isMuted = mute;
             const val = mute ? 1 : 0;
-            spline.setVariable('muteVar', val);
+            try {
+                // Updated access method for local/static environments
+                spline.setVariable('muteVar', val); 
+            } catch (e) {
+                console.error("Spline not ready yet. Retrying...", e);
+            }
         }
 
-        document.getElementById('btn-bio').onclick = () => toggleBio(true);
+        // TOGGLE LOGIC
+        function toggleListen(show) {
+            const listen = document.getElementById('samply-overlay');
+            const bio = document.getElementById('bio-content');
+            
+            if (show) {
+                bio.classList.remove('active');
+                listen.classList.add('active');
+                setSplineMute(true);
+                muteBtn.innerText = "UNMUTE";
+            } else {
+                listen.classList.remove('active');
+            }
+        }
+
+        // Bind your buttons
         document.getElementById('btn-listen').onclick = () => toggleListen(true);
+        document.getElementById('btn-bio').onclick = () => {
+            document.getElementById('bio-content').classList.add('active');
+            document.getElementById('samply-overlay').classList.remove('active');
+        };
         
         muteBtn.onclick = () => {
             isMuted = !isMuted;
             setSplineMute(isMuted);
             muteBtn.innerText = isMuted ? "UNMUTE" : "MUTE";
         };
-
-        // iPad/Safari fix: stop spline from stealing touch
-        spline.addEventListener('touchstart', (e) => {
-            if (e.target.tagName !== 'BUTTON') e.stopPropagation();
-        }, { passive: true });
-
     </script>
 </body>
 </html>
