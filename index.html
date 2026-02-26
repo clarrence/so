@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEB GAINSBOROUGH / VESSEL</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.04);
+            --border: rgba(255, 255, 255, 0.1);
+            --blur: blur(25px) saturate(160%);
+        }
+
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; background: #000; overflow: hidden; color: #fff; }
+
+        /* --- THE BOIL ANIMATION (4fps feel) --- */
+        @keyframes boil {
+            0% { transform: translate(0, 0) skew(0deg); }
+            25% { transform: translate(-0.5px, 0.5px) skew(0.2deg); }
+            50% { transform: translate(0.5px, -0.3px) skew(-0.1deg); }
+            75% { transform: translate(-0.3px, -0.5px) skew(0.1deg); }
+            100% { transform: translate(0, 0) skew(0deg); }
+        }
+
+        .btn-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #fff;
+            padding: 10px;
+            animation: boil 0.25s infinite; /* 4 steps per second approx */
+            transition: opacity 0.3s ease, letter-spacing 0.3s ease;
+            position: fixed;
+            z-index: 10001;
+        }
+
+        .btn-text:hover { opacity: 0.6; letter-spacing: 0.3em; }
+
+        #btn-bio { bottom: 30px; left: 30px; }
+        #btn-listen { top: 30px; right: 30px; }
+        #btn-mute { bottom: 30px; right: 30px; }
+
+        /* --- MODULES --- */
+        .glass-plaque {
+            position: fixed;
+            background: var(--glass);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--border);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+            z-index: 20000;
+        }
+
+        /* Bio Specific */
+        #bio-content {
+            bottom: 40px;
+            left: -450px; /* Hidden state */
+            width: 400px;
+            max-width: 85vw;
+            max-height: 70vh;
+            padding: 45px;
+            overflow-y: auto;
+            scrollbar-width: none;
+            clip-path: polygon(1% 1%, 99% 0%, 98% 30%, 100% 70%, 99% 99%, 30% 98%, 0% 100%, 1% 40%);
+        }
+        #bio-content::-webkit-scrollbar { display: none; }
+
+        #bio-content.active { left: 30px; opacity: 1; pointer-events: auto; }
+
+        /* Samply Specific */
+        #samply-overlay {
+            top: 50%; left: 50%;
+            transform: translate(-50%, -45%) scale(0.95);
+            width: 500px; max-width: 90vw; height: 400px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #samply-overlay.active { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+
+        /* Typography */
+        h1 { font-family: 'Playfair Display', serif; font-size: 24px; text-transform: uppercase; margin-bottom: 20px; }
+        p { font-family: 'Libre Baskerville', serif; font-size: 14.5px; line-height: 1.8; opacity: 0.85; }
+        .close-x { position: absolute; top: 20px; right: 25px; cursor: pointer; opacity: 0.4; }
+
+        /* Spline Layer */
+        spline-viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    </style>
+</head>
+<body>
+
+    <button id="btn-bio" class="btn-text">BIO</button>
+    <button id="btn-listen" class="btn-text">LISTEN</button>
+    <button id="btn-mute" class="btn-text">MUTE</button>
+
+    <div id="bio-content" class="glass-plaque">
+        <span class="close-x" onclick="toggleBio(false)">✕</span>
+        <header>
+            <h1>SEB GAINSBOROUGH <br> <strong>VESSEL</strong></h1>
+        </header>
+        <p>Seb Gainsborough makes electronic and contemporary instrumental music under both his own name and the pseudonym Vessel.</p>
+        <p style="margin-top:20px;">[Insert full bio here—I have kept it short for this block to ensure you have space]</p>
+    </div>
+
+    <div id="samply-overlay" class="glass-plaque">
+        <span class="close-x" onclick="toggleListen(false)">✕</span>
+        <iframe src="https://samply.app/embed/G2INXIQ4sRa21WatK658?si=p3QjMJ38PwRw08nexFUSY079cVD2" width="100%" height="100%" frameborder="0" style="border-radius: 4px;"></iframe>
+    </div>
+
+    <spline-viewer id="main-spline" url="https://prod.spline.design/Vi-TzRE4G-lOpxXh/scene.splinecode"></spline-viewer>
+
+    <script type="module" src="https://unpkg.com/@splinetool/viewer/build/spline-viewer.js"></script>
+
+    <script>
+        const spline = document.getElementById('main-spline');
+        const bio = document.getElementById('bio-content');
+        const listen = document.getElementById('samply-overlay');
+        const muteBtn = document.getElementById('btn-mute');
+        
+        let isMuted = false;
+
+        function toggleBio(show) {
+            if (show) {
+                toggleListen(false);
+                bio.classList.add('active');
+            } else {
+                bio.classList.remove('active');
+            }
+        }
+
+        function toggleListen(show) {
+            if (show) {
+                toggleBio(false);
+                listen.classList.add('active');
+                // Logic: Set Spline to Muted when listening to Samply
+                setSplineMute(true);
+                muteBtn.innerText = "UNMUTE";
+            } else {
+                listen.classList.remove('active');
+                // Suggestion: We stay muted until they explicitly click UNMUTE
+            }
+        }
+
+        function setSplineMute(mute) {
+            isMuted = mute;
+            const val = mute ? 1 : 0;
+            spline.setVariable('muteVar', val);
+        }
+
+        document.getElementById('btn-bio').onclick = () => toggleBio(true);
+        document.getElementById('btn-listen').onclick = () => toggleListen(true);
+        
+        muteBtn.onclick = () => {
+            isMuted = !isMuted;
+            setSplineMute(isMuted);
+            muteBtn.innerText = isMuted ? "UNMUTE" : "MUTE";
+        };
+
+        // iPad/Safari fix: stop spline from stealing touch
+        spline.addEventListener('touchstart', (e) => {
+            if (e.target.tagName !== 'BUTTON') e.stopPropagation();
+        }, { passive: true });
+
+    </script>
+</body>
+</html>
